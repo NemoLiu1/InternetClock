@@ -74,9 +74,9 @@ np = NeoPixel(Screen_pin, 256)
 # np.write()
 # font
 
-def light_on(x, y, red, green, blue):
+def light_on(x, y, color = (50, 50, 50)):
     location = translate(x, y)
-    np[location] = (red , green, blue)
+    np[location] = color
     np.write()
 
 def translate(x, y):
@@ -89,12 +89,22 @@ def translate(x, y):
         return -1
     return location
 
-# def words(x, y, location):
-#     f = font[location]
-#         for row in range(len(f)):
-#             for col in range(len(f[row])):
-#
-# # #             if font[row][col]==1:
-# # #                 light_on(x+col,y+row)
+def show_digi(x, y, digital = 0, color = (50, 50, 50)):
+    word = font[digital]
+    for row in range(0, len(word)):
+        for col in range(0, len(word[row])):
+            if word[row][col] == 1:
+                light_on(x + col, y + row, color)
 
-light_on(3, 5, 50, 0, 0)
+# def
+
+# Test space
+
+show_digi(1,1,0)
+show_digi(5,1,1)
+show_digi(9,1,2)
+show_digi(13,1,3)
+show_digi(17,1,4)
+show_digi(21,1,5)
+
+# light_on(3, 5, (0,0,50))

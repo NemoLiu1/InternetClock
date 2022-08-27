@@ -1,6 +1,10 @@
 from machine import Pin
 from neopixel import NeoPixel
 import time
+from machine import Timer
+from captive_portal import CaptivePortal
+from dfplayermini import Player
+import gc
 
 font = [[[0],  # .
          [0],
@@ -260,6 +264,13 @@ np = NeoPixel(Screen_pin, 256)
 # np.write()
 # font
 
+def clean():
+    for i in range(0, 256):
+        np[i]=(0,0,0)
+
+def show():
+    np.write()
+
 def light_on(x, y, color = (50, 50, 50)):
     location = translate(x, y)
     np[location] = color
@@ -291,17 +302,24 @@ def print_text(x, y, text = 'Hi'):
         x = x + x_axis_len + 1
         np.write()
 
+clock_timer = Timer(0)
+clock_timer.init(period=5000, mode=Timer.ONE_SHOT, callback=lambda t:print(0))
+
+def time_out(t):
+    pass
+
+
 # Testing space
 
-def spacing(x, y, digital):
-    word = font[digital]
-    words = font[digital][0]
-    x_axis_len = len(word)
-    y_axis_len = len(words)
-    # print(x_axis_len)
-    # print(y_axis_len)
-    # print('done')
-    return x_axis_len, y_axis_len
+clean()
+show()
+print_text(1,1,'WIFI...')
+show()
+
+portal = CaptivePortal("Internet_Clock")
+portal.start()
+gc.collect()
+print('ok')
 
 # show_digi(1,1,0)
 # show_digi(5,1,1)
@@ -309,7 +327,7 @@ def spacing(x, y, digital):
 # show_digi(13,1,3)
 # show_digi(17,1,4)
 # show_digi(21,1,5)
-print_text(1, 1, 'NEMO')
+# print_text(1, 1, 'NEMO')
 
 # import time
 # time.sleep(3)

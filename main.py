@@ -5,6 +5,7 @@ from machine import Timer
 from captive_portal import CaptivePortal
 from dfplayermini import Player
 import gc
+import ntptime
 
 font = [[[0],  # .
          [0],
@@ -293,7 +294,7 @@ def show_digi(x, y, digital = 0, color = (50, 50, 50)):
             if word[row][col] == 1:
                 light_on(x + col, y + row, color)
 
-def print_text(x, y, text = 'Hi'):
+def print_text(x = 1, y = 1, text = 'Hi'):
     for character in text:
         character = ord(character) - 46
         word = font[character][0]
@@ -302,17 +303,33 @@ def print_text(x, y, text = 'Hi'):
         x = x + x_axis_len + 1
         np.write()
 
-clock_timer = Timer(0)
-clock_timer.init(period=5000, mode=Timer.ONE_SHOT, callback=lambda t:print(0))
+def clock_init(timer=None):
+    try:
+        clean()
+        print_text(text = 'SYNCING')
+        show()
+        print('Init clock time.')
+        ntptime.settime()
+        timer.init(period=1000 * 60 * 60, mode=Timer.PERIODIC, callback=sync_time)
+        print('Init process successful!')
+    except:
+        print('Failed init clock time.')
+        print('Trying again after 1 second.')
+        timer.init(period=1000, mode=Timer.ONE_SHOT, callback=clock_init)
 
-def time_out(t):
-    pass
+def sync_time(timer=None):
+    try:
+        print('Syncing UTC+8 time.')
+        ntptime.settime()
+        print('Sync process successful!')
+    except:
+        print('Sync time fail.\n Trying again after 1 hour.')
 
-
-# Testing space
+# def show_time():
+#     rtc = RTC()
+#     rtc.datetime()
 
 clean()
-show()
 print_text(1,1,'WIFI...')
 show()
 
@@ -320,6 +337,15 @@ portal = CaptivePortal("Internet_Clock")
 portal.start()
 gc.collect()
 print('ok')
+
+ntptime.NTP_DELTA = 3155644800
+ntptime.host = 'pool.ntp.org'
+
+clock_timer = Timer(0)
+clock_timer.init(period=500, mode=Timer.ONE_SHOT, callback=clock_init)
+
+# screen_refresh = Timer(2)
+# screen_refresh.init(period=20, mode=Timer.PERIODIC, callback=)
 
 # show_digi(1,1,0)
 # show_digi(5,1,1)

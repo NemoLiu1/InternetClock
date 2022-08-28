@@ -6,6 +6,7 @@ from captive_portal import CaptivePortal
 from dfplayermini import Player
 import gc
 import ntptime
+from machine import RTC
 
 font = [[[0],  # .
          [0],
@@ -244,6 +245,9 @@ font = [[[0],  # .
          [0, 0, 0, 0]],
         ]
 
+# p5 = Pin(5, Pin.OUT, value=1)
+
+
 # screen section
 
 # basic comand to light up one pic on the screen
@@ -251,7 +255,7 @@ Screen_pin = Pin(19, Pin.OUT)
 # create a screen(NeoPixel driver) on i/o 19 with 256 pixels
 np = NeoPixel(Screen_pin, 256)
 # set i/o in to output mode
-
+rtc = RTC()
 # # a test tool that can light up each pixel one by one.
 # for i in range(256):
 #     np = NeoPixel(Screen_pin, 256)
@@ -294,28 +298,38 @@ def show_digi(x, y, digital = 0, color = (50, 50, 50)):
             if word[row][col] == 1:
                 light_on(x + col, y + row, color)
 
-def print_text(x = 1, y = 1, text = 'Hi'):
+def print_text(text = 'Hi', x = 3, y = 1):
     for character in text:
         character = ord(character) - 46
         word = font[character][0]
         x_axis_len = len(word)
         show_digi(x, y, character)
         x = x + x_axis_len + 1
-        np.write()
+        # np.write()
 
 def clock_init(timer=None):
     try:
         clean()
-        print_text(text = 'SYNCING')
+        print_text('SYNCING', x = 1, y = 1)
         show()
         print('Init clock time.')
         ntptime.settime()
         timer.init(period=1000 * 60 * 60, mode=Timer.PERIODIC, callback=sync_time)
         print('Init process successful!')
+        # The main reason that I have put the secound timer there(as you can see bellow).
+        # Is because in this way, the second timer will not show up before the whole init process is finish,
+        # which is a bit odd to happen logically.
+        screen_refresh.init(period=20, mode=Timer.PERIODIC, callback=show_time)
     except:
         print('Failed init clock time.')
         print('Trying again after 1 second.')
         timer.init(period=1000, mode=Timer.ONE_SHOT, callback=clock_init)
+
+# padding = 填充
+def padding(num):
+    if num < 10:
+        return '0' + str(num)
+    return str(num)
 
 def sync_time(timer=None):
     try:
@@ -325,12 +339,22 @@ def sync_time(timer=None):
     except:
         print('Sync time fail.\n Trying again after 1 hour.')
 
-# def show_time():
-#     rtc = RTC()
-#     rtc.datetime()
+def show_time(timer=None):
+    clean()
+    curent_time = rtc.datetime()
+    hour = curent_time[4]
+    h = padding(hour)
+    minute = curent_time[5]
+    m = padding(minute)
+    second = curent_time[6]
+    s = padding(second)
+    time = h + ':' + m + ':' + s
+    print_text(time)
+    show()
+
 
 clean()
-print_text(1,1,'WIFI...')
+print_text('WIFI...',1,1)
 show()
 
 portal = CaptivePortal("Internet_Clock")
@@ -344,8 +368,8 @@ ntptime.host = 'pool.ntp.org'
 clock_timer = Timer(0)
 clock_timer.init(period=500, mode=Timer.ONE_SHOT, callback=clock_init)
 
-# screen_refresh = Timer(2)
-# screen_refresh.init(period=20, mode=Timer.PERIODIC, callback=)
+screen_refresh = Timer(2)
+
 
 # show_digi(1,1,0)
 # show_digi(5,1,1)

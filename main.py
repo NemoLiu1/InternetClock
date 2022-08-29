@@ -245,9 +245,6 @@ font = [[[0],  # .
          [0, 0, 0, 0]],
         ]
 
-# p5 = Pin(5, Pin.OUT, value=1)
-
-
 # screen section
 
 # basic comand to light up one pic on the screen
@@ -256,6 +253,11 @@ Screen_pin = Pin(19, Pin.OUT)
 np = NeoPixel(Screen_pin, 256)
 # set i/o in to output mode
 rtc = RTC()
+TIME = 0
+DATE = 1
+BALL = 2
+state = TIME
+music = Player(pin_TX=0, pin_RX=1)
 # # a test tool that can light up each pixel one by one.
 # for i in range(256):
 #     np = NeoPixel(Screen_pin, 256)
@@ -342,16 +344,42 @@ def sync_time(timer=None):
 def show_time(timer=None):
     clean()
     curent_time = rtc.datetime()
-    hour = curent_time[4]
-    h = padding(hour)
-    minute = curent_time[5]
-    m = padding(minute)
-    second = curent_time[6]
-    s = padding(second)
-    time = h + ':' + m + ':' + s
-    print_text(time)
-    show()
+    if state == TIME:
+        hour = curent_time[4]
+        h = padding(hour)
+        minute = curent_time[5]
+        m = padding(minute)
+        second = curent_time[6]
+        s = padding(second)
+        time = h + ':' + m + ':' + s
+        print_text(time, 2, 1)
+        show()
+    elif state == DATE:
+        month = curent_time[1]
+        m = padding(month)
+        day = curent_time[2]
+        d = padding(day)
+        time = m + "/" + d
+        print_text(time, 6, 1)
+        show()
 
+
+def date_time_button_handler(pin):
+    global state
+    if state == TIME:
+        state = DATE
+        print('screen state = 1')
+    elif state == DATE:
+        state = TIME
+        print('screen state = 0')
+
+def sound_controller(pin):
+    curent_time = rtc.datetime()
+    hour = curent_time[4]
+    music.play(hour +1)
+    time.sleep_ms(1400)
+    minute = curent_time[5] + 25
+    music.play(minute)
 
 clean()
 print_text('WIFI...',1,1)
@@ -365,23 +393,21 @@ print('ok')
 ntptime.NTP_DELTA = 3155644800
 ntptime.host = 'pool.ntp.org'
 
+# system timer
+
 clock_timer = Timer(0)
 clock_timer.init(period=500, mode=Timer.ONE_SHOT, callback=clock_init)
 
 screen_refresh = Timer(2)
 
+# dfplayer
 
-# show_digi(1,1,0)
-# show_digi(5,1,1)
-# show_digi(9,1,2)
-# show_digi(13,1,3)
-# show_digi(17,1,4)
-# show_digi(21,1,5)
-# print_text(1, 1, 'NEMO')
 
-# import time
-# time.sleep(3)
-# spacing(0,0,0)
-# spacing(0,0,4)
 
-# light_on(3, 5, (0,0,50))
+# screen state handler/controller
+
+date_button = Pin(6, Pin.IN)
+ball_button = Pin(4, Pin.IN)
+sound_track = Pin(8, Pin.IN)
+date_button.irq(handler=date_time_button_handler, trigger=Pin.IRQ_RISING)
+sound_track.irq(handler=sound_controller, trigger=Pin.IRQ_RISING)

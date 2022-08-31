@@ -258,6 +258,12 @@ DATE = 1
 BALL = 2
 state = TIME
 music = Player(pin_TX=0, pin_RX=1)
+t = 0.02
+x = -2
+y = -1
+velocity_y = 0
+velocity_x = 1 / 0.02
+gravity = 6
 # # a test tool that can light up each pixel one by one.
 # for i in range(256):
 #     np = NeoPixel(Screen_pin, 256)
@@ -280,6 +286,8 @@ def show():
 
 def light_on(x, y, color = (50, 50, 50)):
     location = translate(x, y)
+    if location == -1:
+        return
     np[location] = color
     # np.write()
 
@@ -321,7 +329,7 @@ def clock_init(timer=None):
         # The main reason that I have put the secound timer there(as you can see bellow).
         # Is because in this way, the second timer will not show up before the whole init process is finish,
         # which is a bit odd to happen logically.
-        screen_refresh.init(period=20, mode=Timer.PERIODIC, callback=show_time)
+        screen_refresh.init(period=30, mode=Timer.PERIODIC, callback=show_time)
     except:
         print('Failed init clock time.')
         print('Trying again after 1 second.')
@@ -342,6 +350,7 @@ def sync_time(timer=None):
         print('Sync time fail.\n Trying again after 1 hour.')
 
 def show_time(timer=None):
+    global x, y, velocity_y, state
     clean()
     curent_time = rtc.datetime()
     if state == TIME:
@@ -362,7 +371,20 @@ def show_time(timer=None):
         time = m + "/" + d
         print_text(time, 6, 1)
         show()
+    elif state == BALL:
+        displacement = velocity_y * t + gravity * t * t / 2
+        velocity_y = gravity * t + velocity_y
+        y = y + displacement * 200
+        x = velocity_x * t + x
+        light_on(int(x), int(y))
+        show()
+        print(x, y, displacement, velocity_y, velocity_x)
+        if y > 8:
+            velocity_y = -velocity_y * 0.7
+            y = 7.9
 
+        if x >= 33:
+            state = TIME
 
 def date_time_button_handler(pin):
     global state
@@ -373,13 +395,22 @@ def date_time_button_handler(pin):
         state = TIME
         print('screen state = 0')
 
-def sound_controller(pin):
+def sound_button_handler(pin):
+    print('telling the time.')
     curent_time = rtc.datetime()
     hour = curent_time[4]
     music.play(hour +1)
     time.sleep_ms(1400)
     minute = curent_time[5] + 25
     music.play(minute)
+
+def ball_button_handler(pin):
+    global x, y, velocity_y, state
+    state = BALL
+    x = 0
+    y = 0
+    velocity_y = 0
+
 
 clean()
 print_text('WIFI...',1,1)
@@ -410,4 +441,5 @@ date_button = Pin(6, Pin.IN)
 ball_button = Pin(4, Pin.IN)
 sound_track = Pin(8, Pin.IN)
 date_button.irq(handler=date_time_button_handler, trigger=Pin.IRQ_RISING)
-sound_track.irq(handler=sound_controller, trigger=Pin.IRQ_RISING)
+sound_track.irq(handler=sound_button_handler, trigger=Pin.IRQ_RISING)
+ball_button.irq(handler=ball_button_handler, trigger=Pin.IRQ_RISING)

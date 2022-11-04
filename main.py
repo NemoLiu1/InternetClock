@@ -248,7 +248,7 @@ font = [[[0],  # .
 # screen section
 
 # basic comand to light up one pic on the screen
-Screen_pin = Pin(19, Pin.OUT)
+Screen_pin = Pin(2, Pin.OUT)
 # create a screen(NeoPixel driver) on i/o 19 with 256 pixels
 np = NeoPixel(Screen_pin, 256)
 # set i/o in to output mode
@@ -264,6 +264,8 @@ y = -1
 velocity_y = 0
 velocity_x = 1 / 0.02
 gravity = 6
+
+
 # # a test tool that can light up each pixel one by one.
 # for i in range(256):
 #     np = NeoPixel(Screen_pin, 256)
@@ -277,39 +279,53 @@ gravity = 6
 # np.write()
 # font
 
+#
 def clean():
     for i in range(0, 256):
-        np[i]=(0,0,0)
+        np[i] = (0, 0, 0)
+
 
 def show():
     np.write()
 
-def light_on(x, y, color = (50, 50, 50)):
+
+def light_on(x, y, color=(50, 50, 50)):
     location = translate(x, y)
     if location == -1:
         return
     np[location] = color
     # np.write()
 
+# 根据使用者给出的x与y坐标，通过下面几行将其映射到最终的对应位置。
+# 对应位置是一个从0到255的数字，对应的是屏幕上LED灯的序号。
+# 如果给出的坐标超过范围将返回-1。
 def translate(x, y):
     location = -1
+    # 下面是偶数列的映射规则
     if x % 2 == 0:
         location = 8 * x + y
+    # 下面是奇数列的映射规则
     elif x % 2 == 1:
         location = (8 - (y + 1)) + 8 * x
+    # 判断x与y坐标是否超出范围
     if location == 0 or location > 256:
+        # 假如超出范围就会返回一个-1的值
         return -1
     return location
 
-def show_digi(x, y, digital = 0, color = (50, 50, 50)):
+
+def show_digi(x, y, digital, color=(50, 50, 50)):
     word = font[digital]
     for row in range(0, len(word)):
         for col in range(0, len(word[row])):
             if word[row][col] == 1:
                 light_on(x + col, y + row, color)
 
-def print_text(text = 'Hi', x = 3, y = 1):
+
+def print_text(text, x, y):
     for character in text:
+        # ord是用于找到该字符对应的Unicode编码
+        # 减去46是用来找到该字符在Font里的位置
         character = ord(character) - 46
         word = font[character][0]
         x_axis_len = len(word)
@@ -317,10 +333,11 @@ def print_text(text = 'Hi', x = 3, y = 1):
         x = x + x_axis_len + 1
         # np.write()
 
+
 def clock_init(timer=None):
     try:
         clean()
-        print_text('SYNCING', x = 1, y = 1)
+        print_text('SYNCING', x=1, y=1)
         show()
         print('Init clock time.')
         ntptime.settime()
@@ -335,11 +352,13 @@ def clock_init(timer=None):
         print('Trying again after 1 second.')
         timer.init(period=1000, mode=Timer.ONE_SHOT, callback=clock_init)
 
+
 # padding = 填充
 def padding(num):
     if num < 10:
         return '0' + str(num)
     return str(num)
+
 
 def sync_time(timer=None):
     try:
@@ -348,6 +367,7 @@ def sync_time(timer=None):
         print('Sync process successful!')
     except:
         print('Sync time fail.\n Trying again after 1 hour.')
+
 
 def show_time(timer=None):
     global x, y, velocity_y, state
@@ -386,6 +406,7 @@ def show_time(timer=None):
         if x >= 33:
             state = TIME
 
+
 def date_time_button_handler(pin):
     global state
     if state == TIME:
@@ -395,14 +416,16 @@ def date_time_button_handler(pin):
         state = TIME
         print('screen state = 0')
 
+
 def sound_button_handler(pin):
     print('telling the time.')
     curent_time = rtc.datetime()
     hour = curent_time[4]
-    music.play(hour +1)
+    music.play(hour + 1)
     time.sleep_ms(1400)
     minute = curent_time[5] + 25
     music.play(minute)
+
 
 def ball_button_handler(pin):
     global x, y, velocity_y, state
@@ -413,7 +436,7 @@ def ball_button_handler(pin):
 
 
 clean()
-print_text('WIFI...',1,1)
+print_text('WIFI...', 1, 1)
 show()
 
 portal = CaptivePortal("Internet_Clock")
@@ -431,8 +454,8 @@ clock_timer.init(period=500, mode=Timer.ONE_SHOT, callback=clock_init)
 
 screen_refresh = Timer(2)
 
+# +-
 # dfplayer
-
 
 
 # screen state handler/controller

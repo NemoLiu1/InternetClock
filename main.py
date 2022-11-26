@@ -368,25 +368,31 @@ def sync_time(timer=None):
     except:
         print('Sync time fail.\n Trying again after 1 hour.')
 
+previous_min = 5
 
 def show_time(timer=None):
-    global x, y, velocity_y, state
+    global x, y, velocity_y, state, previous_min
     clean()
-    curent_time = rtc.datetime()
+    current_time = rtc.datetime()
+    month = current_time[1]
+    day = current_time[2]
+    hour = current_time[4]
+    minute = current_time[5]
+    second = current_time[6]
+    # when current_time[5] = 0 and previous_min = 59, play music
+    if minute == 0 and previous_min == 59 and 7 <= hour <= 22:
+        tell_the_time()
+    # 前一时刻的分钟是59，当前时刻的分钟是0的时候，播放整点报时
+    previous_min = minute
     if state == TIME:
-        hour = curent_time[4]
         h = padding(hour)
-        minute = curent_time[5]
         m = padding(minute)
-        second = curent_time[6]
         s = padding(second)
         time = h + ':' + m + ':' + s
         print_text(time, 2, 1)
         show()
     elif state == DATE:
-        month = curent_time[1]
         m = padding(month)
-        day = curent_time[2]
         d = padding(day)
         time = m + "/" + d
         print_text(time, 6, 1)
@@ -418,14 +424,8 @@ def date_time_button_handler(pin):
 
 
 def sound_button_handler(pin):
-    print('telling the time.')
-    curent_time = rtc.datetime()
-    hour = curent_time[4]
-    music.play(hour + 1)
-    time.sleep_ms(1400)
-    minute = curent_time[5] + 25
-    music.play(minute)
-
+    print('sound button triggered')
+    tell_the_time()
 
 def ball_button_handler(pin):
     global x, y, velocity_y, state
@@ -434,6 +434,16 @@ def ball_button_handler(pin):
     y = 0
     velocity_y = 0
 
+def tell_the_time():
+    print('telling the time.')
+    current_time = rtc.datetime()
+    hour = current_time[4]
+    minute = current_time[5]
+    music.play(hour + 1)
+    if minute == 0:
+        return
+    time.sleep_ms(1400)
+    music.play(minute + 25)
 
 clean()
 print_text('WIFI...', 1, 1)

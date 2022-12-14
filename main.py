@@ -374,18 +374,20 @@ def show_time(timer=None):
     global x, y, velocity_y, state, previous_min
     clean()
     current_time = rtc.datetime()
-    month = current_time[1]
-    day = current_time[2]
-    hour = current_time[4]
+    month  = current_time[1]
+    day    = current_time[2]
+    hour   = current_time[4]
     minute = current_time[5]
     second = current_time[6]
-    # when current_time[5] = 0 and previous_min = 59, play music
+    # when current_time[5] = 0 (current min) and previous_min = 59, play music
+    # 前一时刻的分钟是59，当前时刻的分钟是0的时候，播放整点报时
     if minute == 0 and previous_min == 59 and 7 <= hour <= 22:
         tell_the_time()
-    # 前一时刻的分钟是59，当前时刻的分钟是0的时候，播放整点报时
+    # record the current time in to a variable named “previous_min”.
+    # it will be used in the next time to compare the time.
     previous_min = minute
     if state == TIME:
-        h = padding(hour)
+        h = padding(hour);;.
         m = padding(minute)
         s = padding(second)
         time = h + ':' + m + ':' + s

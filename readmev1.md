@@ -36,7 +36,33 @@ When I go over this whole thing with my dad, a professional software developer, 
 
    1. In his design, he have provided many useful functions that would help and make the screen have more variability. However, we need to setup the host first. The host is a program that need to be on at the whole time in order to keep the clock(controller) running. Which means, if you want this clock to be on, you PC should also be on the whole time. 
 
-So, after discussion with my dad about the details of the personal project, he suggest me to work on a rather smaller and simpler project than this one. I listen what he recommended, then approached my own project according to AWTRIX's hardware. I named it -- Internet Clock. The reason I have named it "Internet clock" is because I want it to show the exsact time of the day and date, with out losting track of 
+So, after discussion with my dad about the details of the personal project, he suggest me to work on a rather smaller and simpler project than this one. I listen what he recommended, then approached my own project according to AWTRIX's hardware. I named it -- Internet Clock. The reason I have named it "Internet clock" is because I want it to show the exact time of the day and date, with out losing track of time by sync current time through NTP server. Just like what a phone dose. After a time of thinking, I have **seted** up 3 goals.
+
+First, my clock should be able to auto sync the time by using connection with a NTP server. Which is a server runs exsac time.
+
+Second, it should be able to call out time during each hour (in the range of 7 am  in the morning to 22 pm in the night).'
+
+Third, it should be able to show the exact time of the day by using WS2812 matrix screen, in a fine order for people to read and identify the time.
+
+After Listed out our goal and expectation for internet clock. It time to come up with a plan.
+
+Prototype
+
+Hardware
+
+Software
+
+Expermentation
+
+Out side layer
+
+
+
+Difficalties I have encountered during the way & how did I face and fix it.
+
+
+
+
 
 自动设置并通过互联网调整时间 （就像手机一样）
 

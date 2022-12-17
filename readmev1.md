@@ -4,15 +4,7 @@
 
 ### The author have only programmed this program through with a windows 11 operating system.  There might be mistakes and place that won't work out for you, you might need to adapt to some of the changes by yourself.
 
-## subject Idea：
-
-During the 2022's chinese new year fastval, I was woring on a project with a clock by using ESP8266. 
-
-
-
 ## Project's initial
-
-我妈想要一个钟，家里有但很麻烦（列出缺点）。依靠着Personal Project 和的契机，我希望可以做出一个可以像手机一样，不需要设置，走时准确的钟。通过和父亲交流，得知了AWRTIX项目的存在，我就希望尝试一个类似形式的。通过更加深入的调研，我发现虽然AWRTIX项目虽然功能极其强大且实用，但是整体步骤和使用都略显复杂，脱离了我对这个项目目标的想象。
 
 The whole thing started when a day in the June, my mom complained about the clock we got in the center of the room was not working all the time, and when ever she is reseating up the clock, by changing battery, she needs to do the readjusting time process (adjust it to the current time). Which inspired me the idea of wanting to have a clock of main that can work without this whole process of setting up the clock. Although the idea of spending serval days working on this project just to fix this problem seems dumb,  but actually it is not. The process of resetting a clock is not that complex or takes much time to do, it is just a simple thing that will makes you depressed and tuned all the good mood of the day especially if it happens in the morning, when you are caching up the time to go to school or work, which can be really frustrating. 
 
@@ -46,95 +38,13 @@ Third, it should be able to show the exact time of the day by using WS2812 matri
 
 After Listed out our goal and expectation for internet clock. It time to come up with a plan.
 
-Prototype
-
-Hardware
-
-Software
-
-Expermentation
-
-Out side layer
-
-
-
-Difficalties I have encountered during the way & how did I face and fix it.
+![image-20221217223634671](images/image-20221217223634671.png)
 
 
 
 
 
-自动设置并通过互联网调整时间 （就像手机一样）
-
-白天时间段可以做到整点语音报时
-
-合理的通过屏幕显示准确的时间
-
-指定计划
-
-原型
-
-硬件
-
-软件
-
-搭载实验
-
-外壳
-
- In order to approach my project, I have seted up goals to help me get to it, step by step.
-
-First one, my clock should be able to show time the exsact time to the user, and will not lost track of it (even if it has been pluged off).
-
-在他的项目中，他在安装设置时，需要在电脑里添加一个“server/host”来保持它的运作，
-
-研究了他的项目以后，以其为参考，开始了自己的 InternetClock 项目。
-
-修改了目标
-
-现目标：
-
-1. 
-
-参考了他的硬件，设计出我的钟（一些同样功能的零件的替换）
-
-（零件列表，功能介绍）https://github.com/awtrix/AWTRIX2.0-Docs/blob/master/en-en/hardware.md
-
-
-
-
-
-Came out this idea
-
-这个idea好的地方 我们为什么需要这个钟
-
-我要尝试做这个钟但更具体的细节都没有
-
-通过父亲知道了AWTRX项目的存在，
-
-
-
-When I started this project I
-
-
-
-Plan v1
-
-​	
-
-​	有了这个想法之后，按照[AWTRIX项目](https://github.com/awtrix/AWTRIX2.0-Docs/tree/master/en-en)的思路尝试并制作了第一个原型。（放图）
-
-​	
-
-​	
-
-    stuff we need
-
-    tasks need to be done
-
-
-
-
+Difficulties I have encountered during the way & how did I face and fix it.
 
 
 

@@ -784,17 +784,6 @@ I would like to give credit for the list of people, with out them, this project 
 
 
 
-# Draft 草稿部分
-
-笔记
-
-gantt chart 的图记得换，为了省事上面的图不是最终版的
-
-复制到芯片当中
-
-在DFplayer 里面的TF卡的音频问题
-
-#### 向老师提问
 
 
 
